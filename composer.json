@@ -1,20 +1,20 @@
 {
-    "name": "artdarek/oauth-4-laravel",
+    "name": "pasadinhas/oauth-4-laravel",
     "type": "library",
     "description": "OAuth Service Provider for Laravel 4",
     "keywords": ["OAuth", "Lusitanian", "laravel", "php"],
-    "homepage": "https://github.com/artdarek/oauth-4-laravel",
+    "homepage": "https://github.com/pasadinhas/oauth-4-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": "Artdarek",
-            "email": "artdarek@gmail.com",
+            "name": "Miguel Pasadinhas",
+            "email": "miguel.pasadinhas@tecnico.ulisboa.pt",
             "role": "Developer"
         }
     ],
     "require": {
         "php": ">=5.3",     
-        "lusitanian/oauth": "~0.3"
+        "pasadinhas/oauth": "~0.3"
     },
     "require-dev": {
         "illuminate/support": "~4"
