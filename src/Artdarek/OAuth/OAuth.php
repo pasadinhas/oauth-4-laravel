@@ -45,6 +45,12 @@ class OAuth
      * @var array
      */
     private $_scope = array();
+    
+    /**
+     * Redirect URL from config
+     * @var string
+     */
+    private $_url;
 
     /**
      * Constructor
@@ -74,6 +80,7 @@ class OAuth
             $this->_client_id = Config::get("oauth-4-laravel.consumers.$service.client_id");
             $this->_client_secret = Config::get("oauth-4-laravel.consumers.$service.client_secret");
             $this->_scope = Config::get("oauth-4-laravel.consumers.$service.scope", array() );
+            $this->_url = Config::get("oauth-4-laravel.consumers.$service.redirect_url", null );
 
         // esle try to find config in packages configs
         } else {
@@ -81,6 +88,7 @@ class OAuth
             $this->_client_id = Config::get("oauth-4-laravel::consumers.$service.client_id");
             $this->_client_secret = Config::get("oauth-4-laravel::consumers.$service.client_secret");
             $this->_scope = Config::get("oauth-4-laravel::consumers.$service.scope", array() );
+            $this->_url = Config::get("oauth-4-laravel::consumers.$service.redirect_url", null );
         }
     }
 
@@ -128,7 +136,7 @@ class OAuth
         $credentials = new Credentials(
             $this->_client_id,
             $this->_client_secret,
-            $url ?: URL::current()
+            $this->_url ?: $url ?: URL::current()
         );
 
         // check if scopes were provided
