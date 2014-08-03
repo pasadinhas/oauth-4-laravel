@@ -136,7 +136,7 @@ class OAuth
         $credentials = new Credentials(
             $this->_client_id,
             $this->_client_secret,
-            $this->_url ?: $url ?: URL::current()
+            $url ?: $this->_url ?: URL::current()
         );
 
         // check if scopes were provided
