@@ -7,16 +7,15 @@
 
 namespace Artdarek\OAuth;
 
+use Config;
 use Illuminate\Support\ServiceProvider;
+use OAuth\Common\Consumer\Credentials;
 
-use \Config;
-use \URL;
+use OAuth\ServiceFactory;
+use URL;
 
-use \OAuth\ServiceFactory;
-use \OAuth\Common\Consumer\Credentials;
+class OAuth {
 
-class OAuth
-{
     /**
      * @var ServiceFactory
      */
@@ -45,12 +44,18 @@ class OAuth
      * @var array
      */
     private $_scope = array();
-    
+
     /**
      * Redirect URL from config
      * @var string
      */
     private $_url;
+
+    /**
+     * Weather the token should be automagically refreshed from config
+     * @var boolean
+     */
+    private $_refresh;
 
     /**
      * Constructor
@@ -71,24 +76,25 @@ class OAuth
      *
      * @param string $service
      */
-    public function setConfig( $service )
+    public function setConfig($service)
     {
         // if config/oauth-4-laravel.php exists use this one
-        if ( Config::get('oauth-4-laravel.consumers') != null ) {
+        if (Config::get('oauth-4-laravel.consumers') != null) {
 
             $this->_storage_name = Config::get('oauth-4-laravel.storage', 'Session');
             $this->_client_id = Config::get("oauth-4-laravel.consumers.$service.client_id");
             $this->_client_secret = Config::get("oauth-4-laravel.consumers.$service.client_secret");
-            $this->_scope = Config::get("oauth-4-laravel.consumers.$service.scope", array() );
-            $this->_url = Config::get("oauth-4-laravel.consumers.$service.redirect_url", null );
-
-        // esle try to find config in packages configs
+            $this->_scope = Config::get("oauth-4-laravel.consumers.$service.scope", array());
+            $this->_url = Config::get("oauth-4-laravel.consumers.$service.redirect_url", null);
+            $this->_refresh = Config::get("oauth-4-laravel.consumers.$service.automatic_refresh", false);
+            // else try to find config in packages configs
         } else {
             $this->_storage_name = Config::get('oauth-4-laravel::storage', 'Session');
             $this->_client_id = Config::get("oauth-4-laravel::consumers.$service.client_id");
             $this->_client_secret = Config::get("oauth-4-laravel::consumers.$service.client_secret");
-            $this->_scope = Config::get("oauth-4-laravel::consumers.$service.scope", array() );
-            $this->_url = Config::get("oauth-4-laravel::consumers.$service.redirect_url", null );
+            $this->_scope = Config::get("oauth-4-laravel::consumers.$service.scope", array());
+            $this->_url = Config::get("oauth-4-laravel::consumers.$service.redirect_url", null);
+            $this->_refresh = Config::get("oauth-4-laravel::consumers.$service.automatic_refresh", false);
         }
     }
 
@@ -96,6 +102,7 @@ class OAuth
      * Create storage instance
      *
      * @param string $storageName
+     *
      * @return OAuth\Common\\Storage
      */
     public function createStorageInstance($storageName)
@@ -110,6 +117,7 @@ class OAuth
      * Set the http client object
      *
      * @param string $httpClientName
+     *
      * @return void
      */
     public function setHttpClient($httpClientName)
@@ -122,32 +130,32 @@ class OAuth
      * @param  string $service
      * @param  string $url
      * @param  array  $scope
+     *
      * @return \OAuth\Common\Service\AbstractService
      */
-    public function consumer( $service, $url = null, $scope = null )
+    public function consumer($service, $url = null, $scope = null)
     {
         // get config
-        $this->setConfig( $service );
+        $this->setConfig($service);
 
         // get storage object
-        $storage = $this->createStorageInstance( $this->_storage_name );
+        $storage = $this->createStorageInstance($this->_storage_name);
 
         // create credentials object
         $credentials = new Credentials(
             $this->_client_id,
             $this->_client_secret,
-            $url ?: $this->_url ?: URL::current()
+            $url ? : $this->_url ? : URL::current()
         );
 
         // check if scopes were provided
-        if (is_null($scope))
-        {
+        if (is_null($scope)) {
             // get scope from config (default to empty array)
             $scope = $this->_scope;
         }
 
         // return the service consumer object
-        return $this->_serviceFactory->createService($service, $credentials, $storage, $scope);
+        return $this->_serviceFactory->createService($service, $credentials, $storage, $scope, $this->_refresh);
 
     }
 }

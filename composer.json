@@ -13,17 +13,17 @@
         }
     ],
     "require": {
-        "php": ">=5.3",     
-        "pasadinhas/oauth": ">=2.0.2"
+        "php": ">=5.3",
+        "pasadinhas/oauth": "dev-master"
     },
     "require-dev": {
         "illuminate/support": "~4"
-    },    
+    },
     "require-all": true,
-    "autoload": {    
+    "autoload": {
         "psr-0": {
             "Artdarek\\OAuth": "src/"
         }
-    },    
-    "minimum-stability": "dev"    
+    },
+    "minimum-stability": "dev"
 }
