@@ -1,6 +1,6 @@
 # OAuth wrapper for Laravel 4
 
-oauth-4-laravel is a simple laravel 4 service provider (wrapper) for [Lusitanian/PHPoAuthLib](https://github.com/Lusitanian/PHPoAuthLib) 
+oauth-4-laravel is a simple laravel 4 service provider (wrapper) for [Pasadinhas/PHPoAuthLib](https://github.com/pasadinhas/PHPoAuthLib) 
 which provides oAuth support in PHP 5.3+ and is very easy to integrate with any project which requires an oAuth client.
 
 ---
@@ -15,7 +15,7 @@ which provides oAuth support in PHP 5.3+ and is very easy to integrate with any 
 
 ## Supported services
 
-The library supports both oAuth 1.x and oAuth 2.0 compliant services. A list of currently implemented services can be found below. More services will be implemented soon.
+The library supports both oAuth 1.x and oAuth 2.0 compliant services. A list of currently implemented services can be found below. If you implement a service, feel free to make a pull request with it!
 
 Included service implementations:
 
@@ -36,6 +36,7 @@ Included service implementations:
     - Dailymotion
     - Dropbox
     - Facebook
+    - FenixEdu
     - Foursquare
     - GitHub
     - Google
@@ -52,17 +53,16 @@ Included service implementations:
     - SoundCloud
     - Vkontakte
     - Yammer
-- more to come!
 
-To learn more about Lusitanian/PHPoAuthLib go [here](https://github.com/Lusitanian/PHPoAuthLib) 
+To learn more about pasadinhas/PHPoAuthLib go [here](https://github.com/pasadinhas/PHPoAuthLib) 
 
 ## Installation
 
-Add oauth-4-laravel to your composer.json file:
+Add oauth-4-laravel to your composer.json file (1.2.0 is the recomended version, feel free to use what you want/need):
 
 ```
 "require": {
-  "pasadinhas/oauth-4-laravel": "dev-master"
+  "pasadinhas/oauth-4-laravel": "1.2.0"
 }
 ```
 
@@ -80,7 +80,7 @@ Register the service provider within the ```providers``` array found in ```app/c
 'providers' => array(
 	// ...
 	
-	'Artdarek\OAuth\OAuthServiceProvider'
+	'LaravelOAuth\OAuthServiceProvider'
 )
 ```
 
@@ -91,7 +91,7 @@ Add an alias within the ```aliases``` array found in ```app/config/app.php```:
 'aliases' => array(
 	// ...
 	
-	'OAuth' => 'Artdarek\OAuth\Facade\OAuth',
+	'OAuth' => 'LaravelOAuth\Facade\OAuth',
 )
 ```
 
@@ -109,7 +109,7 @@ your ``app\config\`` directory (option 2).
 Create configuration file for package using artisan command
 
 ```
-$ php artisan config:publish artdarek/oauth-4-laravel
+$ php artisan config:publish pasadinhas/oauth-4-laravel
 ```
 
 #### Option 2
@@ -135,6 +135,8 @@ return array(
 	 */
 	'consumers' => array(
 
+		// Add your consumers here. Example:
+
 		/**
 		 * Facebook
 		 */
@@ -151,11 +153,11 @@ return array(
 
 ### Credentials
 
-Add your credentials to ``app/config/packages/artdarek/oauth-4-laravel/config.php`` or ``app/config/oauth-4-laravel.php`` (depending on which option of configuration you choose)
+Add your credentials to ``app/config/packages/pasadinhas/oauth-4-laravel/config.php`` or ``app/config/oauth-4-laravel.php`` (depending on which option of configuration you choose)
 
 
 The `Storage` attribute is optional and defaults to `Session`. 
-Other [options](https://github.com/Lusitanian/PHPoAuthLib/tree/master/src/OAuth/Common/Storage).
+[Other options](https://github.com/pasadinhas/PHPoAuthLib/tree/master/src/OAuth/Common/Storage).
 
 ## Usage
 
@@ -167,7 +169,7 @@ Just follow the steps below and you will be able to get a [service class object]
 $fb = OAuth::consumer('Facebook');
 ```
 
-Optionally, add a second parameter with the URL which the service needs to redirect to, otherwise it will redirect to the current URL.
+Optionally, add a second parameter with the URL which the service needs to redirect to. Otherwise it will look in the the config file for an option `redirect_url`. If that configuration is not present, it will redirect to the current URL.
 
 ```php
 $fb = OAuth::consumer('Facebook','http://url.to.redirect.to');
@@ -178,7 +180,7 @@ $fb = OAuth::consumer('Facebook','http://url.to.redirect.to');
 ###Facebook:
 
 Configuration:
-Add your Facebook credentials to ``app/config/packages/artdarek/oauth-4-laravel/config.php``
+Add your Facebook credentials to ``app/config/packages/artdarek/oauth-4-laravel/config.php`` or ``app/config/oauth-4-laravel.php``:
 
 ```php
 'Facebook' => array(
@@ -199,27 +201,28 @@ In your Controller use the following code:
 public function loginWithFacebook() {
 	
 	// get data from input
-	$code = Input::get( 'code' );
+	$code = Input::get('code');
 	
 	// get fb service
-	$fb = OAuth::consumer( 'Facebook' );
+	$fb = OAuth::consumer('Facebook');
 	
 	// check if code is valid
 	
 	// if code is provided get user data and sign in
-	if ( !empty( $code ) ) {
+	if (!empty($code)) {
 		
 		// This was a callback request from facebook, get the token
-		$token = $fb->requestAccessToken( $code );
+		$token = $fb->requestAccessToken($code);
 		
 		// Send a request with it
-		$result = json_decode( $fb->request( '/me' ), true );
+		$result = json_decode($fb->request('/me'), true);
 		
 		$message = 'Your unique facebook user id is: ' . $result['id'] . ' and your name is ' . $result['name'];
 		echo $message. "<br/>";
 		
 		//Var_dump
 		//display whole array().
+		echo "<pre>";
 		dd($result);
 	
 	}
@@ -229,7 +232,7 @@ public function loginWithFacebook() {
 		$url = $fb->getAuthorizationUri();
 		
 		// return to facebook login url
-		 return Redirect::to( (string)$url );
+		 return Redirect::to((string) $url);
 	}
 
 }
@@ -341,7 +344,69 @@ In your Controller use the following code:
 
 ```
 
+###FenixEdu:
+
+Configuration:
+Add your FenixEdu credentials to ``app/config/packages/artdarek/oauth-4-laravel/config.php`` or ``app/config/oauth-4-laravel.php``:
+
+```php
+'FenixEdu' => array(
+    'client_id'         => 'Your FenixEdu Client ID',
+    'client_secret'     => 'Your FenixEdu Client Secret',
+    'redirect_url'      => 'Your FenixEdu redirect URL',
+    'automatic_refresh' => true, // if you want to use the refresh token automaticly
+),	
+```
+In your Controller use the following code:
+
+```php
+/**
+ * Login user with FenixEdu
+ *
+ * @return void
+ */
+
+public function loginWithFenixEdu() {
+	
+	// get data from input
+	$code = Input::get('code');
+	
+	// get FenixEdu service
+	$fenix = OAuth::consumer('FenixEdu');
+	
+	// check if code is valid
+	
+	// if code is provided get user data and sign in
+	if (!empty($code)) {
+		
+		// This was a callback request from facebook, get the token
+		$token = $fenix->requestAccessToken($code);
+		
+		// Send a request with it
+		$result = json_decode($fb->request('/person'), true);
+		
+		$message = 'Your FenixEdu user is: ' . $result['username'] . ' and your name is ' . $result['name'];
+		echo $message. "<br/>";
+		
+		//Var_dump
+		//display whole array().
+		echo "<pre>";
+		dd($result);
+	
+	}
+	// if not ask for permission first
+	else {
+		// get fb authorization
+		$url = $fenix->getAuthorizationUri();
+		
+		// return to facebook login url
+		 return Redirect::to((string) $url);
+	}
+
+}
+```
+
 ### More usage examples:
 
-For examples go [here](https://github.com/Lusitanian/PHPoAuthLib/tree/master/examples)
+For examples go [here](https://github.com/pasadinhas/PHPoAuthLib/tree/master/examples)
 
