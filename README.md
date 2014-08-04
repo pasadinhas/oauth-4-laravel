@@ -383,7 +383,7 @@ public function loginWithFenixEdu() {
 		$token = $fenix->requestAccessToken($code);
 		
 		// Send a request with it
-		$result = json_decode($fb->request('/person'), true);
+		$result = json_decode($fenix->request('/person'), true);
 		
 		$message = 'Your FenixEdu user is: ' . $result['username'] . ' and your name is ' . $result['name'];
 		echo $message. "<br/>";
@@ -396,10 +396,10 @@ public function loginWithFenixEdu() {
 	}
 	// if not ask for permission first
 	else {
-		// get fb authorization
+		// get FenixEdu authorization
 		$url = $fenix->getAuthorizationUri();
 		
-		// return to facebook login url
+		// return to FenixEdu login url
 		 return Redirect::to((string) $url);
 	}
 
