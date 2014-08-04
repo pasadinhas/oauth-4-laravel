@@ -22,7 +22,7 @@
     "require-all": true,
     "autoload": {
         "psr-0": {
-            "OAuth": "src/"
+            "LaravelOAuth": "src/"
         }
     },
     "minimum-stability": "stable"
