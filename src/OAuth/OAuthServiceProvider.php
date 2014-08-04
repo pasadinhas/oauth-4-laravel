@@ -1,4 +1,4 @@
-<?php namespace OAuth;
+<?php namespace LaravelOAuth;
 
 use Illuminate\Support\ServiceProvider;
 

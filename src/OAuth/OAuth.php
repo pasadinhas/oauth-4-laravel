@@ -5,11 +5,10 @@
  * @license    http://www.opensource.org/licenses/mit-license.html MIT License
  */
 
-namespace OAuth;
+namespace LaravelOAuth;
 
 use Config;
 use Illuminate\Support\ServiceProvider;
-
 use OAuth\Common\Consumer\Credentials;
 use OAuth\ServiceFactory;
 use URL;
