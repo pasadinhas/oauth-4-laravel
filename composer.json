@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=5.3",
-        "pasadinhas/oauth": "2.1.0"
+        "pasadinhas/oauth": "~2.1.0"
     },
     "require-dev": {
         "illuminate/support": "~4"
@@ -22,7 +22,7 @@
     "require-all": true,
     "autoload": {
         "psr-0": {
-            "Artdarek\\OAuth": "src/"
+            "OAuth": "src/"
         }
     },
     "minimum-stability": "stable"
