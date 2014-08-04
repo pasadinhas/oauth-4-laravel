@@ -1,11 +1,4 @@
-<?php
-/**
- * @author     Dariusz Prząda <artdarek@gmail.com>
- * @copyright  Copyright (c) 2013
- * @license    http://www.opensource.org/licenses/mit-license.html MIT License
- */
-
-namespace Artdarek\OAuth;
+<?php namespace OAuth;
 
 use Illuminate\Support\ServiceProvider;
 

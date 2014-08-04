@@ -5,12 +5,12 @@
  * @license    http://www.opensource.org/licenses/mit-license.html MIT License
  */
 
-namespace Artdarek\OAuth;
+namespace OAuth;
 
 use Config;
 use Illuminate\Support\ServiceProvider;
-use OAuth\Common\Consumer\Credentials;
 
+use OAuth\Common\Consumer\Credentials;
 use OAuth\ServiceFactory;
 use URL;
 
@@ -22,7 +22,7 @@ class OAuth {
     private $_serviceFactory;
 
     /**
-     * Storege name from config
+     * Storage name from config
      * @var string
      */
     private $_storage_name = 'Session';
